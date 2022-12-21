@@ -147,7 +147,7 @@ class Swimming(Training):
             (self.get_mean_speed() + self.CALORIES_WEIGHT_MULTIPLIER)
             * self.CALORIES_SPEED_HEIGHT_MULTIPLIER
             * self.weight * self.duration
-            )
+        )
 
 
 def read_package(workout_type: str, data: list[int]) -> Training:
