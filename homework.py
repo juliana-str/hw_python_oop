@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, asdict
 from typing import List
 
 
@@ -11,20 +11,16 @@ class InfoMessage:
     speed: float
     calories: float
     MESSAGE = (
-        'Тип тренировки: {training_type}; Длительность: {duration:.3f} ч.; '
-        'Дистанция: {distance:.3f} км; Ср. скорость: {speed:.3f} км/ч; '
+        'Тип тренировки: {training_type}; '
+        'Длительность: {duration:.3f} ч.; '
+        'Дистанция: {distance:.3f} км; '
+        'Ср. скорость: {speed:.3f} км/ч; '
         'Потрачено ккал: {calories:.3f}.'
     )
 
     def get_message(self) -> str:
         """Получить сообщение о тренировке."""
-        return self.MESSAGE.format(
-            training_type=self.training_type,
-            duration=self.duration,
-            distance=self.distance,
-            speed=self.speed,
-            calories=self.calories
-        )
+        return self.MESSAGE.format(**asdict(self))
 
 
 class Training:
@@ -70,14 +66,6 @@ class Running(Training):
     """Тренировка: бег."""
     CALORIES_MEAN_SPEED_MULTIPLIER: float = 18
     CALORIES_MEAN_SPEED_SHIFT: float = 1.79
-
-    def __init__(
-        self,
-        action: int,
-        duration: float,
-        weight: float
-    ) -> None:
-        super().__init__(action, duration, weight)
 
     def get_spent_calories(self) -> float:
         """Получить количество затраченных калорий."""
@@ -154,8 +142,9 @@ class Swimming(Training):
 def read_package(workout_type: str, data: List[int]) -> Training:
     """Прочитать данные полученные от датчиков."""
     workout_types = {'SWM': Swimming, 'RUN': Running, 'WLK': SportsWalking}
-    if workout_type not in workout_types.keys():
-        raise ValueError("Неизвестный тип тренировки.")
+    if workout_type not in workout_types:
+        raise ValueError('Неизвестный тип тренировки. '
+                         'Типы тренировок: Swimming, Running, SportsWalking')
     return workout_types[workout_type](*data)
 
 
